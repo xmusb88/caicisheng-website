@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>厦门财生生科技有限公司</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Microsoft YaHei", sans-serif; }
+        :root { --main-blue: #0066CC; --light-gray: #F5F5F5; --gray: #666; --white: #fff; }
+        a { text-decoration: none; color: #333; }
+        ul { list-style: none; }
+        .container { width: 90%; max-width: 1200px; margin: 0 auto; }
+
+        /* 导航栏 */
+        .header { border-bottom: 2px solid var(--main-blue); background: var(--white); position: sticky; top: 0; z-index: 999; }
+        .nav { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; }
+        .logo { font-size: 22px; font-weight: bold; color: var(--main-blue); }
+        .logo img { height: 40px; vertical-align: middle; margin-right: 10px; }
+        .nav-list { display: flex; gap: 30px; }
+        .nav-list a { color: #333; padding: 5px 0; border-bottom: 2px solid transparent; transition: 0.3s; }
+        .nav-list a:hover, .nav-list a.active { color: var(--main-blue); border-bottom: 2px solid var(--main-blue); }
+
+        /* 轮播图 */
+        .banner { width: 100%; height: 350px; overflow: hidden; position: relative; }
+        .banner img { width: 100%; height: 100%; object-fit: cover; }
+
+        /* 内容通用 */
+        .section { padding: 60px 0; background: var(--light-gray); }
+        .section-title { text-align: center; font-size: 28px; color: var(--main-blue); margin-bottom: 30px; position: relative; }
+        .section-title::after { content: ""; width: 80px; height: 3px; background: var(--main-blue); position: absolute; bottom: -10px; left: 50%; transform: translateX(-50%); }
+        .content-card { background: var(--white); padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); line-height: 1.8; color: var(--gray); }
+
+        /* 产品列表 */
+        .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+        .product-item { background: var(--white); border-radius: 8px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .product-item img { width: 100%; height: 180px; object-fit: cover; }
+        .product-info { padding: 20px; }
+        .product-info h3 { color: var(--main-blue); margin-bottom: 10px; }
+        .product-info p { color: var(--gray); font-size: 14px; }
+
+        /* 联系模块 */
+        .contact-box { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
+        .contact-info { background: var(--white); padding: 30px; border-radius: 8px; line-height: 2.2; }
+        .contact-form { background: var(--white); padding: 30px; border-radius: 8px; }
+        .contact-form input, .contact-form textarea { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 4px; }
+        .contact-form button { background: var(--main-blue); color: var(--white); border: none; padding: 12px; width: 100%; border-radius: 4px; cursor: pointer; }
+
+        /* 后台登录 */
+        .login-container { width: 100%; height: 100vh; display: flex; justify-content: center; align-items: center; background: var(--light-gray); }
+        .login-box { background: var(--white); padding: 40px; border-radius: 8px; box-shadow: 0 2px 20px rgba(0,0,0,0.1); width: 100%; max-width: 400px; }
+        .login-box h2 { text-align: center; color: var(--main-blue); margin-bottom: 30px; }
+        .login-box input { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 4px; }
+        .login-box button { background: var(--main-blue); color: var(--white); border: none; padding: 12px; width: 100%; border-radius: 4px; cursor: pointer; }
+
+        /* 后台管理 */
+        .admin-header { background: var(--main-blue); color: var(--white); padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; }
+        .admin-container { width: 90%; max-width: 1200px; margin: 30px auto; display: grid; grid-template-columns: 1fr 1fr 1.5fr; gap: 20px; }
+        .admin-card { background: var(--white); padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .admin-card h3 { color: var(--main-blue); margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid #eee; }
+        .admin-card input, .admin-card textarea { width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 4px; }
+        .admin-card textarea { height: 150px; resize: none; }
+        .admin-card button { background: var(--main-blue); color: var(--white); border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; }
+
+        /* 底部 */
+        .footer { background: var(--main-blue); color: var(--white); text-align: center; padding: 30px 0; margin-top: 40px; }
+
+        /* 响应式适配 */
+        @media (max-width: 768px) {
+            .nav-list { display: none; }
+            .banner { height: 220px; }
+            .contact-box, .admin-container { grid-template-columns: 1fr; }
+            .product-grid { grid-template-columns: 1fr; }
+        }
+
+        /* 页面切换控制 */
+        .page { display: none; }
+        .page.active { display: block; }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <header class="header">
+        <div class="container nav">
+            <div class="logo">
+                <img src="https://picsum.photos/40/40?color=0066CC" alt="厦门财生生科技LOGO">
+                厦门财生生科技有限公司
+            </div>
+            <ul class="nav-list">
+                <li><a href="javascript:;" onclick="showPage('home')" class="active">首页</a></li>
+                <li><a href="javascript:;" onclick="showPage('about')">关于我们</a></li>
+                <li><a href="javascript:;" onclick="showPage('product')">产品展示</a></li>
+                <li><a href="javascript:;" onclick="showPage('contact')">联系我们</a></li>
+                <li><a href="javascript:;" onclick="showPage('admin-login')">后台登录</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <!-- 首页 -->
+    <div id="page-home" class="page active">
+        <div class="banner">
+            <img src="https://picsum.photos/1920/350?topic=ship" alt="船舶检测服务">
+        </div>
+        <section class="section">
+            <div class="container">
+                <h2 class="section-title">公司简介</h2>
+                <div class="content-card" id="introContent">
+                    厦门财生生科技公司拥有一支业务精湛、经验丰富的专业取样检测团队，中高级职称人员比例达80%以上，均是船舶行业、检测行业的资深人员，熟悉国际海事公约和各港口国地方法规，能够熟练使用ISO、EPA、GB等多种方法进行检测，同时熟悉相关船用设备的功能、要求，能够有针对性的制定检测方案并且给出有效的问题解决方案。<br><br>
+                    <strong>公司经营范围：</strong>检验检测服务；船舶修理；船舶检验服务技术服务、技术开发、技术咨询、技术交流、技术转让环境监测专用仪器仪表销售；实验分析仪器销售；生态环境监测及检测仪器仪表销售；生态环境材料销售；建筑材料销售；机械设备销售；普通机械设备安装服务；劳务服务（不含劳务派遣）。工业自动化系统、仪器仪表、机电成套设备（不含汽车）的检测、安装、维护、维修、技术服务；检测技术推广、咨询；工业产品检测；批发：仪器设备、农业机械产品、机械包装设备、机电产品（不含九座及九座以下乘用车）、化工试剂（不含危险品）、装饰材料、计算机及配件、家具、办公用品及耗材、服装、教学仪器设备；计算机软硬件的技术研究与销售，计算机软件开发；室内外装饰装潢工程设计与施工。（依法须经批准的项目，经相关部门批准后方可开展经营活动）。
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- 关于我们 -->
+    <div id="page-about" class="page">
+        <section class="section">
+            <div class="container">
+                <h2 class="section-title">关于我们</h2>
+                <div class="content-card">
+                    <h3 style="color: var(--main-blue); margin-bottom: 15px;">资深专业的人员</h3>
+                    <p>公司拥有一支业务精湛、经验丰富的专业取样检测团队，中高级职称人员比例达80%以上，均是船舶行业、检测行业的资深人员，熟悉国际海事公约和各港口国地方法规，能够熟练使用ISO、EPA、GB等多种方法进行检测，同时熟悉相关船用设备的功能、要求，能够有针对性的制定检测方案并且给出有效的问题解决方案。</p>
+                </div>
+                <div class="content-card" style="margin-top:20px;">
+                    <h3 style="color: var(--main-blue); margin-bottom: 15px;">标准化实验室</h3>
+                    <p>为满足船舶有害物质（IHM）的分析以及压载水D-2标准的详细分析，经过专业设计，我们有标准化的检测实验室，配备二级生物安全实验室（BSL-2）等，整体配套齐全，具备前沿的硬件设施和标准的检测环境。实验室配备荧光显微镜、体视显微镜、生物显微镜、超低温冰箱、医用冷藏箱、生化培养箱、高温灭菌器、生物安全柜、洁净工作台、纯水仪等30余种精密仪器设备。</p>
+                </div>
+                <div class="content-card" style="margin-top:20px;">
+                    <h3 style="color: var(--main-blue); margin-bottom: 15px;">强大的技术支持</h3>
+                    <p>公司聘请中国海洋大学教授和集美大学教授为技术总监，能够为我们提供全面的技术指导与支持。核心团队主要从事污染控制微生物分子生态学、废水生物处理技术、海洋微生物学等研究，2004年IMO《国际船舶压载水及沉积物管理与控制公约》生效后，深度参与船舶压载水处理科研工作，在压载水D-2标准检测验证中完成大量实船检测、路基检测工作，积累了丰富的实战经验和第一手资料。</p>
+                </div>
+                <div class="content-card" style="margin-top:20px;">
+                    <h3 style="color: var(--main-blue); margin-bottom: 15px;">强强联合</h3>
+                    <p>厦门财生生科技与厦门海关技术中心、中检集团、海检集团合作，在水质检测、船舶有害物质（IHM）、油品化验、气体分析等领域进行全方位合作，我们不仅能够满足客户的检测需求，还可以根据检测结果进行跟踪比对、分析整合，帮助客户评价机械设备的技术状态，并提出相应的处理建议，为客户提供深层次的服务。</p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- 产品展示 -->
+    <div id="page-product" class="page">
+        <section class="section">
+            <div class="container">
+                <h2 class="section-title">产品与服务展示</h2>
+                <div class="product-grid">
+                    <div class="product-item">
+                        <img src="https://picsum.photos/300/180?topic=shipdetect" alt="船舶有害物质检测">
+                        <div class="product-info">
+                            <h3>船舶有害物质（IHM）检测</h3>
+                            <p>专业开展船舶有害物质取样与分析，符合国际海事公约标准，提供全面的检测报告与解决方案。</p>
+                        </div>
+                    </div>
+                    <div class="product-item">
+                        <img src="https://picsum.photos/300/180?topic=waterdetect" alt="压载水D-2标准检测">
+                        <div class="product-info">
+                            <h3>压载水D-2标准检测</h3>
+                            <p>依据IMO公约要求，完成压载水实船/路基检测，精准验证是否满足D-2排放标准。</p>
+                        </div>
+                    </div>
+                    <div class="product-item">
+                        <img src="https://picsum.photos/300/180?topic=waterquality" alt="水质检测服务">
+                        <div class="product-info">
+                            <h3>船舶水质检测</h3>
+                            <p>涵盖船舶生活污水、工业废水等多类水质检测，采用ISO/EPA/GB标准，数据精准可靠。</p>
+                        </div>
+                    </div>
+                    <div class="product-item">
+                        <img src="https://picsum.photos/300/180?topic=oiltest" alt="船舶油品化验">
+                        <div class="product-info">
+                            <h3>船舶油品化验</h3>
+                            <p>专业开展船舶燃油、润滑油等油品成分分析、质量检测，为船舶设备运行提供保障。</p>
+                        </div>
+                    </div>
+                    <div class="product-item">
+                        <img src="https://picsum.photos/300/180?topic=gasdetect" alt="气体分析服务">
+                        <div class="product-info">
+                            <h3>船舶气体分析</h3>
+                            <p>针对船舶舱室气体、尾气等进行成分分析与浓度检测，排查安全隐患，符合港口国法规。</p>
+                        </div>
+                    </div>
+                    <div class="product-item">
+                        <img src="https://picsum.photos/300/180?topic=shiprepair" alt="船舶修理与检验">
+                        <div class="product-info">
+                            <h3>船舶修理与检验服务</h3>
+                            <p>提供船舶设备检测、维修、安装服务，结合检测数据评价设备状态，给出专业维修建议。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- 联系我们 -->
+    <div id="page-contact" class="page">
+        <section class="section">
+            <div class="container">
+                <h2 class="section-title">联系我们</h2>
+                <div class="contact-box">
+                    <div class="contact-info" id="contactInfo">
+                        <p><strong>电话：</strong><span id="phone">13860191918</span></p>
+                        <p><strong>在线QQ：</strong><span id="qq">515115543@qq.com</span></p>
+                        <p><strong>企业邮箱：</strong><span id="email">ess88@qq.com</span></p>
+                        <p><strong>公司地址：</strong>厦门市思明区湖滨南路76号百脑汇科技大厦1817</p>
+                    </div>
+                    <div class="contact-form">
+                        <form onsubmit="submitMessage(event)">
+                            <input type="text" name="name" placeholder="您的姓名" required>
+                            <input type="tel" name="tel" placeholder="您的电话" required>
+                            <input type="email" name="email" placeholder="您的邮箱" required>
+                            <textarea name="content" placeholder="您的需求/问题" required></textarea>
+                            <button type="submit">提交留言</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- 后台登录页 -->
+    <div id="page-admin-login" class="page">
+        <div class="login-container">
+            <div class="login-box">
+                <h2>管理员登录</h2>
+                <form onsubmit="adminLogin(event)">
+                    <input type="text" id="adminUser" placeholder="账号" value="admin">
+                    <input type="password" id="adminPwd" placeholder="密码" value="123456">
+                    <button type="submit">登录</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- 后台管理页 -->
+    <div id="page-admin" class="page">
+        <div class="admin-header">
+            <h2>厦门财生生科技 - 网站管理后台</h2>
+            <button onclick="adminLogout()">退出登录</button>
+        </div>
+        <div class="admin-container">
+            <div class="admin-card">
+                <h3>修改公司简介</h3>
+                <textarea id="introEditor"></textarea>
+                <button onclick="saveIntro()">保存修改</button>
+            </div>
+            <div class="admin-card">
+                <h3>修改联系方式</h3>
+                <input type="text" id="phoneEditor" placeholder="联系电话">
+                <input type="text" id="qqEditor" placeholder="在线QQ">
+                <input type="text" id="emailEditor" placeholder="企业邮箱">
+                <button onclick="saveContact()">保存修改</button>
+            </div>
+            <div class="admin-card">
+                <h3>在线留言管理</h3>
+                <div id="messageList"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 底部 -->
+    <footer class="footer">
+        <div class="container">
+            <p>厦门财生生科技有限公司 © 2025 版权所有</p>
+            <p>地址：厦门市思明区湖滨南路76号百脑汇科技大厦1817</p>
+        </div>
+    </footer>
+
+    <script>
+        // 页面切换
+        function showPage(pageName) {
+            document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+            document.getElementById('page-' + pageName).classList.add('active');
+            document.querySelectorAll('.nav-list a').forEach(link => link.classList.remove('active'));
+            if(pageName === 'admin-login' || pageName === 'admin') {
+                document.querySelectorAll('.nav-list a')[4].classList.add('active');
+            } else {
+                document.querySelectorAll('.nav-list a')[['home','about','product','contact'].indexOf(pageName)].classList.add('active');
+            }
+        }
+
+        // 加载本地缓存数据
+        window.onload = function() {
+            // 加载公司简介
+            const savedIntro = localStorage.getItem("companyIntro");
+            if(savedIntro) {
+                document.getElementById("introContent").innerHTML = savedIntro;
+            }
+            // 加载联系方式
+            const savedContact = JSON.parse(localStorage.getItem("companyContact") || '{"phone":"13860191918","qq":"515115543@qq.com","email":"ess88@qq.com"}');
+            document.getElementById("phone").innerText = savedContact.phone;
+            document.getElementById("qq").innerText = savedContact.qq;
+            document.getElementById("email").innerText = savedContact.email;
+            // 加载后台数据
+            if(localStorage.getItem("isLogin") === "true") {
+                showPage('admin');
+                document.getElementById("introEditor").value = savedIntro || document.getElementById("introContent").innerHTML.replace(/<br>/g, "\n");
+                document.getElementById("phoneEditor").value = savedContact.phone;
+                document.getElementById("qqEditor").value = savedContact.qq;
+                document.getElementById("emailEditor").value = savedContact.email;
+                loadMessages();
+            }
+        }
+
+        // 提交留言
+        function submitMessage(e) {
+            e.preventDefault();
+            const form = e.target;
+            const message = {
+                name: form.name.value,
+                tel: form.tel.value,
+                email: form.email.value,
+                content: form.content.value,
+                time: new Date().toLocaleString()
+            };
+            const messages = JSON.parse(localStorage.getItem("messages") || "[]");
+            messages.unshift(message);
+            localStorage.setItem("messages", JSON.stringify(messages));
+            alert("留言提交成功！我们将尽快与您联系。");
+            form.reset();
+        }
+
+        // 后台登录
+        function adminLogin(e) {
+            e.preventDefault();
+            const username = document.getElementById("adminUser").value;
+            const password = document.getElementById("adminPwd").value;
+            if(username === "admin" && password === "123456") {
+                localStorage.setItem("isLogin", "true");
+                showPage('admin');
+                document.getElementById("introEditor").value = localStorage.getItem("companyIntro") || document.getElementById("introContent").innerHTML.replace(/<br>/g, "\n");
+                document.getElementById("phoneEditor").value = JSON.parse(localStorage.getItem("companyContact") || '{"phone":"13860191918","qq":"515115543@qq.com","email":"ess88@qq.com"}').phone;
+                document.getElementById("qqEditor").value = JSON.parse(localStorage.getItem("companyContact") || '{"phone":"13860191918","qq":"515115543@qq.com","email":"ess88@qq.com"}').qq;
+                document.getElementById("emailEditor").value = JSON.parse(localStorage.getItem("companyContact") || '{"phone":"13860191918","qq":"515115543@qq.com","email":"ess88@qq.com"}').email;
+                loadMessages();
+            } else {
+                alert("账号或密码错误！");
+            }
+        }
+
+        // 后台退出
+        function adminLogout() {
+            localStorage.removeItem("isLogin");
+            showPage('home');
+        }
+
+        // 保存公司简介
+        function saveIntro() {
+            const intro = document.getElementById("introEditor").value.replace(/\n/g, "<br>");
+            localStorage.setItem("companyIntro", intro);
+            document.getElementById("introContent").innerHTML = intro;
+            alert("公司简介修改成功！");
+        }
+
+        // 保存联系方式
+        function saveContact() {
+            const contact = {
+                phone: document.getElementById("phoneEditor").value,
+                qq: document.getElementById("qqEditor").value,
+                email: document.getElementById("emailEditor").value
+            };
+            localStorage.setItem("companyContact", JSON.stringify(contact));
+            document.getElementById("phone").innerText = contact.phone;
+            document.getElementById("qq").innerText = contact.qq;
+            document.getElementById("email").innerText = contact.email;
+            alert("联系方式修改成功！");
+        }
+
+        // 加载留言
+        function loadMessages() {
+            const messages = JSON.parse(localStorage.getItem("messages") || "[]");
+            const messageList = document.getElementById("messageList");
+            if(messages.length === 0) {
+                messageList.innerHTML = "<p style='text-align:center;color:#999;'>暂无留言</p>";
+                return;
+            }
+            messageList.innerHTML = "";
+            messages.forEach(item => {
+                const div = document.createElement("div");
+                div.style = "padding:10px; margin-bottom:10px; background:#f5f5f5; border-radius:4px;";
+                div.innerHTML = `
+                    <p><strong>姓名：</strong>${item.name}</p>
+                    <p><strong>电话：</strong>${item.tel}</p>
+                    <p><strong>邮箱：</strong>${item.email}</p>
+                    <p><strong>时间：</strong>${item.time}</p>
+                    <p><strong>留言：</strong>${item.content}</p>
+                `;
+                messageList.appendChild(div);
+            });
+        }
+    </script>
+</body>
+</html>
