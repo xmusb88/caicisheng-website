@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>管理后台</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Microsoft YaHei,sans-serif}
+:root{--blue:#0066CC}
+body{background:#f5f5f5}
+.login{height:100vh;display:flex;align-items:center;justify-content:center}
+.login .box{background:#fff;padding:40px;width:400px;border-radius:8px}
+.login h2{text-align:center;color:var(--blue);margin-bottom:20px}
+.login input{width:100%;padding:12px;margin-bottom:15px;border:1px solid #ddd;border-radius:4px}
+.login button{background:var(--blue);color:#fff;border:none;padding:12px;width:100%;border-radius:4px}
+.admin{display:none}
+.header{background:var(--blue);color:#fff;display:flex;justify-content:space-between;align-items:center;padding:15px 30px}
+.header button{background:#fff;color:var(--blue);border:none;padding:8px 15px;border-radius:4px}
+.main{width:90%;max-width:1200px;margin:30px auto;display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px}
+.card{background:#fff;padding:20px;border-radius:8px;margin-bottom:20px}
+.card h3{color:var(--blue);margin-bottom:15px}
+input,textarea{width:100%;padding:10px;margin-bottom:10px;border:1px solid #ddd;border-radius:4px}
+button{background:var(--blue);color:#fff;border:none;padding:8px 12px;border-radius:4px;margin-right:5px}
+.product-item{padding:10px;background:#f5f5f5;margin-bottom:8px;border-radius:4px;display:flex;justify-content:space-between;align-items:center}
+</style>
+</head>
+<body>
+
+<div class="login">
+<div class="box">
+<h2>管理员登录</h2>
+<input id="user" placeholder="账号" value="admin">
+<input id="pwd" placeholder="密码" value="123456">
+<button onclick="login()">登录</button>
+</div>
+</div>
+
+<div class="admin">
+<div class="header">
+<h2>厦门财生生科技 - 管理后台</h2>
+<button onclick="logout()">退出</button>
+</div>
+
+<div class="main">
+<div class="card">
+<h3>首页轮播大图</h3>
+<input id="bannerImg" placeholder="图片网址">
+<button onclick="saveBanner()">保存大图</button>
+</div>
+
+<div class="card">
+<h3>公司简介</h3>
+<textarea id="intro" rows="8"></textarea>
+<button onclick="saveIntro()">保存</button>
+</div>
+
+<div class="card">
+<h3>关于我们</h3>
+<textarea id="about" rows="8"></textarea>
+<button onclick="saveAbout()">保存</button>
+</div>
+
+<div class="card">
+<h3>联系方式</h3>
+<input id="phone" placeholder="电话">
+<input id="qq" placeholder="QQ">
+<input id="email" placeholder="邮箱">
+<button onclick="saveContact()">保存</button>
+</div>
+
+<div class="card">
+<h3>添加/编辑产品</h3>
+<input id="pname" placeholder="产品名称">
+<textarea id="pdesc" placeholder="产品介绍" rows="3"></textarea>
+<input id="pimg" placeholder="产品图片网址">
+<button onclick="saveProduct()">保存产品</button>
+</div>
+
+<div class="card">
+<h3>产品列表</h3>
+<div id="plist"></div>
+</div>
+</div>
+</div>
+
+<script>
+let editIndex=-1;
+function login(){
+let u=document.getElementById("user").value;
+let p=document.getElementById("pwd").value;
+if(u=="admin"&&p=="123456"){
+document.querySelector(".login").style.display="none";
+document.querySelector(".admin").style.display="block";
+loadData();
+}else{alert("账号密码错误")}
+}
+function logout(){
+document.querySelector(".login").style.display="flex";
+document.querySelector(".admin").style.display="none";
+editIndex=-1;
+}
+
+function loadData(){
+let b=JSON.parse(localStorage.getItem("banner")||'{"img":"https://picsum.photos/1920/380?ship"}');
+document.getElementById("bannerImg").value=b.img;
+document.getElementById("intro").value=localStorage.getItem("intro")||"";
+document.getElementById("about").value=localStorage.getItem("about")||"";
+let c=JSON.parse(localStorage.getItem("contact")||'{"phone":"13860191918","qq":"515115543@qq.com","email":"ess88@qq.com"}');
+document.getElementById("phone").value=c.phone;
+document.getElementById("qq").value=c.qq;
+document.getElementById("email").value=c.email;
+refreshProductList();
+}
+
+function saveBanner(){
+let img=document.getElementById("bannerImg").value;
+localStorage.setItem("banner",JSON.stringify({img}));
+alert("首页大图保存成功！前台刷新生效");
+}
+function saveIntro(){
+localStorage.setItem("intro",document.getElementById("intro").value);
+alert("保存成功");
+}
+function saveAbout(){
+localStorage.setItem("about",document.getElementById("about").value);
+alert("保存成功");
+}
+function saveContact(){
+let c={
+phone:document.getElementById("phone").value,
+qq:document.getElementById("qq").value,
+email:document.getElementById("email").value
+};
+localStorage.setItem("contact",JSON.stringify(c));
+alert("保存成功");
+}
+
+function saveProduct(){
+let name=document.getElementById("pname").value;
+let desc=document.getElementById("pdesc").value;
+let img=document.getElementById("pimg").value;
+if(!name||!desc||!img){alert("请填写完整");return}
+let list=JSON.parse(localStorage.getItem("products")||"[]");
+let item={name,desc,img};
+if(editIndex===-1){list.push(item)}else{list[editIndex]=item;editIndex=-1}
+localStorage.setItem("products",JSON.stringify(list));
+alert("产品保存成功");
+document.getElementById("pname").value="";
+document.getElementById("pdesc").value="";
+document.getElementById("pimg").value="";
+refreshProductList();
+}
+
+function refreshProductList(){
+let list=JSON.parse(localStorage.getItem("products")||"[]");
+let html="";
+list.forEach((item,index)=>{
+html+=`
+<div class="product-item">
+<span>${item.name}</span>
+<div>
+<button onclick="editProduct(${index})">编辑</button>
+<button onclick="delProduct(${index})">删除</button>
+</div>
+</div>`;
+});
+document.getElementById("plist").innerHTML=html;
+}
+
+function editProduct(index){
+let list=JSON.parse(localStorage.getItem("products")||"[]");
+let p=list[index];
+document.getElementById("pname").value=p.name;
+document.getElementById("pdesc").value=p.desc;
+document.getElementById("pimg").value=p.img;
+editIndex=index;
+}
+
+function delProduct(index){
+if(!confirm("确定删除？"))return;
+let list=JSON.parse(localStorage.getItem("products")||"[]");
+list.splice(index,1);
+localStorage.setItem("products",JSON.stringify(list));
+refreshProductList();
+}
+</script>
+</body>
+</html>
